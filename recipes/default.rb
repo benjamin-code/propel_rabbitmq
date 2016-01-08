@@ -24,22 +24,21 @@ if ( node.hostname =~ /centos6(.*)/ )
   execute "Download rabbitmq-server-3.5.4-1.noarch.rpm" do
   user "root"
   cwd   "/tmp"
-  command "wget https://www.rabbitmq.com/releases/rabbitmq-server/v3.5.4/rabbitmq-server-3.5.4-1.noarch.rpm"
+  command "wget https://www.rabbitmq.com/releases/rabbitmq-server/v3.5.4/rabbitmq-server-3.5.4-1.noarch.rpm & rpm -ivh /tmp/rabbitmq-server-3.5.4-1.noarch.rpm"
   end
 end
 
 if ( node.hostname =~ /propel-ha(.*)/ )
-  execute "Download rabbitmq-server-3.5.4-1.noarch.rpm" do
-  user "root"
-  cwd   "/tmp"
-  command "http://30.161.224.150/rpm/rabbitmq-server-3.5.4-1.noarch.rpm"
-  end
+    execute "Install rabbitmq-server" do
+      user "root"
+      command "rpm -Uvh http://30.161.224.150/rpm/rabbitmq-server-3.5.4-1.noarch.rpm"
+    end
 end
 
-rpm_package 'rabbitmq-server-3.5.4-1.noarch.rpm' do
-   source '/tmp/rabbitmq-server-3.5.4-1.noarch.rpm'
-   action :install
-end
+#rpm_package 'rabbitmq-server-3.5.4-1.noarch.rpm' do
+#   source '/tmp/rabbitmq-server-3.5.4-1.noarch.rpm'
+#   action :install
+#end
 
 if ( node.hostname =~ /atc(.*)/ )
   yum_package 'rabbitmq-server' do
