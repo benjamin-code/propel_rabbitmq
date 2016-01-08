@@ -24,7 +24,7 @@ if ( node.hostname =~ /centos6(.*)/ )
   execute "Download rabbitmq-server-3.5.4-1.noarch.rpm" do
   user "root"
   cwd   "/tmp"
-  command "wget https://www.rabbitmq.com/releases/rabbitmq-server/v3.5.4/rabbitmq-server-3.5.4-1.noarch.rpm & rpm -ivh /tmp/rabbitmq-server-3.5.4-1.noarch.rpm"
+  command "wget https://www.rabbitmq.com/releases/rabbitmq-server/v3.5.4/rabbitmq-server-3.5.4-1.noarch.rpm & rpm -Uvh /tmp/rabbitmq-server-3.5.4-1.noarch.rpm"
   end
 end
 
@@ -73,7 +73,6 @@ cookbook_file '/var/lib/rabbitmq/.erlang.cookie' do
   group 'rabbitmq'
   mode '0400'
 end
-
 
 
 #Import ssl for Nginx to truststore. 
