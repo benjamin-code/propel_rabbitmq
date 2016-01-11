@@ -21,16 +21,17 @@ if ( node.hostname =~ /centos6(.*)/ )
 end
 
 if ( node.hostname =~ /propel-ha(.*)/ )
-    execute "Install-rabbitmq-server" do
-      user "root"
-      command "rpm -Uvh /tmp/rabbitmq-server-3.5.4-1.noarch.rpm"
-      action :nothing
-    end
     remote_file "/tmp/rabbitmq-server-3.5.4-1.noarch.rpm" do
       source 'http://30.161.224.150/rpm/rabbitmq-server-3.5.4-1.noarch.rpm' 
       mode "0755"
       notifies   :run, 'execute[Install-rabbitmq-server]', :immediately
+      notifies :run, "bash[Add-user]"
       action  :create_if_missing
+    end
+    execute "Install-rabbitmq-server" do
+      user "root"
+      command "rpm -Uvh /tmp/rabbitmq-server-3.5.4-1.noarch.rpm"
+      action :nothing
     end
 end
 
@@ -38,17 +39,21 @@ if ( node.hostname =~ /atc(.*)/ )
   yum_package 'rabbitmq-server' do
     action :install
     flush_cache [ :before ]
+    notifies :run, "bash[Add-user]"
   end
 end
+service 'rabbitmq-server' do
+    service_name 'rabbitmq-server'
+  action [:enable, :start]
+end
 
-#Add new user for propel, and grant admin privilege, and set full permission for vhost "/". Do it in both nodes
-execute "Add-user" do
-   user "root"
-   command <<-EOH
+bash "Add-user" do
+    action  :nothing
+    code <<-EOH
       rabbitmqctl add_user rabbit_sx propel2014
       rabbitmqctl set_user_tags rabbit_sx administrator
       rabbitmqctl set_permissions -p / rabbit_sx ".*" ".*" ".*"
-      EOH
+    EOH
 end
 
 cookbook_file '/var/lib/rabbitmq/.erlang.cookie' do
