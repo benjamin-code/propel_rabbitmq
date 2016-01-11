@@ -7,14 +7,6 @@
 # All rights reserved - Do Not Redistribute
 #
 
-dirlist=["/opt/hp/","/opt/hp/propel","/opt/hp/propel/security" ]
-  dirlist.each do |dir| 
-        directory dir do
-        mode "0755"
-        action :create
-  end
-end 
-
 yum_package 'erlang' do
   action :install
   flush_cache [ :before ]
@@ -29,26 +21,24 @@ if ( node.hostname =~ /centos6(.*)/ )
 end
 
 if ( node.hostname =~ /propel-ha(.*)/ )
-    execute "Install rabbitmq-server" do
+    execute "Install-rabbitmq-server" do
       user "root"
-      command "rpm -Uvh http://30.161.224.150/rpm/rabbitmq-server-3.5.4-1.noarch.rpm"
+      command "rpm -Uvh /tmp/rabbitmq-server-3.5.4-1.noarch.rpm"
+      action :nothing
+    end
+    remote_file "/tmp/rabbitmq-server-3.5.4-1.noarch.rpm" do
+      source 'http://30.161.224.150/rpm/rabbitmq-server-3.5.4-1.noarch.rpm' 
+      mode "0755"
+      notifies   :run, 'execute[Install-rabbitmq-server]', :immediately
+      action  :create_if_missing
     end
 end
-
-#rpm_package 'rabbitmq-server-3.5.4-1.noarch.rpm' do
-#   source '/tmp/rabbitmq-server-3.5.4-1.noarch.rpm'
-#   action :install
-#end
 
 if ( node.hostname =~ /atc(.*)/ )
   yum_package 'rabbitmq-server' do
     action :install
     flush_cache [ :before ]
   end
-end
-
-service "rabbitmq-server" do
-  action [ :start ]
 end
 
 #Add new user for propel, and grant admin privilege, and set full permission for vhost "/". Do it in both nodes
@@ -61,17 +51,12 @@ execute "Add-user" do
       EOH
 end
 
-#Stop rabbitmq in two servers with command
-execute "Stop-rabbitmq" do
-   user "root"
-   command "rabbitmqctl stop"
-end
-
 cookbook_file '/var/lib/rabbitmq/.erlang.cookie' do
   source '.erlang.cookie'
   owner 'rabbitmq'
   group 'rabbitmq'
   mode '0400'
+  notifies :restart, "service[rabbitmq-server]"
 end
 
 

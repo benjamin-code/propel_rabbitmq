@@ -4,11 +4,12 @@ template "/etc/rabbitmq/rabbitmq.config" do
     variables ({
       :propel_backend_1 => node[:propel_rabbitmq][:propel_backend_1],
       :propel_backend_2 => node[:propel_rabbitmq][:propel_backend_2],
-    })
+    }) 
+    notifies :run, "bash[Reset-rabbitmq-server]"
 end
 
-bash "Start and reset rabbitmq-server" do 
-#  action :nothing
+bash "Reset-rabbitmq-server" do 
+  action :nothing
   code <<-EOH
       /etc/rc.d/init.d/rabbitmq-server restart
       rabbitmqctl stop_app
