@@ -15,21 +15,14 @@ end
 bash "import-ssl" do 
  cwd   '/tmp/propel'
  code <<-EOH
-  count=0
   for file in ./*
     file_name=${file%.crt}
     do
       if ! keytool -list -keystore /opt/hp/propel/security/propel.truststore -storepass "propel2014" | grep -q $file_name
       then
         keytool -importcert -file $file -keystore /opt/hp/propel/security/propel.truststore -alias "$file_name" -storepass "propel2014" -noprompt
-        count=`expr $count + 1 `
       fi
     done
-    if [ $count -gt 0 ]; then
-        echo $count
-#        propel stop
-#        peopel start
-    fi
   EOH
 end
 
