@@ -7,6 +7,11 @@
 # All rights reserved - Do Not Redistribute
 #
 
+cookbook_file '/etc/yum.repos.d/erlang_solutions.repo' do
+  source 'erlang_solutions.repo'
+  mode '0644'
+end
+
 yum_package 'erlang' do
   action :install
   flush_cache [ :before ]
