@@ -1,33 +1,35 @@
-
-#Import ssl cert for rabbitmq
-cookbook_file '/tmp/ssl_crt.tar.gz' do
-  source 'ssl_crt.tar.gz'
+directory '/tmp/propel' do
   mode '0755'
-  notifies :run, "bash[import-ssl]"
-  notifies :run, "bash[restart-propel]"
+  action :create
 end
 
-  bash "import-ssl" do 
-   cwd   '/tmp'
-   action :nothing
-   code <<-EOH
-          dir_name="/tmp/ssl_crt/"
-          all=`ls  ${dir_name}`
-          for i in $all
-            do
-            nodename=${i%_pro*}
-            if ! keytool -list -keystore /opt/hp/propel/security/propel.truststore -storepass "propel2014" | grep -q $nodename
-                      then
-                        keytool -importcert -file /tmp/ssl_crt/"$nodename"_propel_host.crt -keystore /opt/hp/propel/security/propel.truststore -alias "$nodename" -storepass "propel2016" -noprompt
-            fi
-            done
-      EOH
-  end
+search(:node, 'name:*') do |n|
+    if n["ssl_cert"]
+        host_name = n["fqdn"]
+        f = File.open("/tmp/propel/#{host_name}.crt", 'w')
+        f.puts n["ssl_cert"]
+        f.close
+    end
+end
 
- bash "restart-propel" do 
-   action :nothing
-   code <<-EOH
-          propel stop
-          propel startr  
-      EOH
-  end
+bash "import-ssl" do 
+ cwd   '/tmp/propel'
+ code <<-EOH
+  count=0
+  for file in ./*
+    file_name=${file%.crt}
+    do
+      if ! keytool -list -keystore /opt/hp/propel/security/propel.truststore -storepass "propel2014" | grep -q $file_name
+      then
+        keytool -importcert -file $file -keystore /opt/hp/propel/security/propel.truststore -alias "$file_name" -storepass "propel2014" -noprompt
+        count=`expr $count + 1 `
+      fi
+    done
+    if [ $count -gt 0 ]; then
+        echo $count
+#        propel stop
+#        peopel start
+    fi
+  EOH
+end
+
