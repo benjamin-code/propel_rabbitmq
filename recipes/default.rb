@@ -31,6 +31,7 @@ if ( node.hostname =~ /propel-ha(.*)/ )
       mode "0755"
       notifies   :run, 'execute[Install-rabbitmq-server]', :immediately
       notifies :run, "bash[Add-user]"
+      notifies :run, "bash[env-check]"
       action  :create_if_missing
     end
     execute "Install-rabbitmq-server" do
@@ -47,9 +48,21 @@ if ( node.hostname =~ /atc(.*)/ )
     notifies :run, "bash[Add-user]"
   end
 end
+
 service 'rabbitmq-server' do
     service_name 'rabbitmq-server'
   action [:enable, :start]
+end
+
+bash "env-check" do
+    action  :nothing
+    code <<-EOH
+        pid=`pidof beam.smp`
+            if [ $pid -ne 0 ];then
+               kill -9 $pid
+               service rabbitmq-server restart
+            fi
+    EOH
 end
 
 bash "Add-user" do
