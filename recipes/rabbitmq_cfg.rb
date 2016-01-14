@@ -5,7 +5,8 @@ template "/etc/rabbitmq/rabbitmq.config" do
       :propel_backend_1 => node[:propel_rabbitmq][:propel_backend_1],
       :propel_backend_2 => node[:propel_rabbitmq][:propel_backend_2],
     }) 
-    notifies :run, "bash[Reset-rabbitmq-server]"
+        notifies :restart, 'service[rabbitmq-server]', :immediately
+        notifies :run, "bash[Reset-rabbitmq-server]", :immediately
 end
 
 bash "Reset-rabbitmq-server" do 
