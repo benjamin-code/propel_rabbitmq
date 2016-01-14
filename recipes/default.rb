@@ -30,8 +30,8 @@ if ( node.hostname =~ /propel-ha(.*)/ )
       source 'http://30.161.224.150/rpm/rabbitmq-server-3.5.4-1.noarch.rpm' 
       mode "0755"
       notifies   :run, 'execute[Install-rabbitmq-server]', :immediately
-      notifies :run, "bash[Add-user]"
-      notifies :run, "bash[env-check]"
+      notifies :run, "bash[Add-user]":immediately
+      notifies :run, "bash[env-check]":immediately
       action  :create_if_missing
     end
     execute "Install-rabbitmq-server" do
