@@ -12,7 +12,6 @@ end
 bash "Reset-rabbitmq-server" do 
   action :nothing
   code <<-EOH
-      /etc/rc.d/init.d/rabbitmq-server restart
       rabbitmqctl stop_app
       rabbitmqctl reset
       rabbitmqctl start_app
