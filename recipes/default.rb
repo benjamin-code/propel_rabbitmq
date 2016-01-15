@@ -53,12 +53,5 @@ service 'rabbitmq-server' do
   action [:enable, :start]
 end
 
-cookbook_file '/var/lib/rabbitmq/.erlang.cookie' do
-  source '.erlang.cookie'
-  owner 'rabbitmq'
-  group 'rabbitmq'
-  mode '0400'
-  notifies :restart, "service[rabbitmq-server]"
-end
 
 

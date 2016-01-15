@@ -1,3 +1,16 @@
+service 'rabbitmq-server' do
+    service_name 'rabbitmq-server'
+    action [ :stop]
+    only_if { ::File.exist?("/var/lib/rabbitmq/.erlang.cookie") }
+end
+
+cookbook_file '/var/lib/rabbitmq/.erlang.cookie' do
+  source '.erlang.cookie'
+  owner 'rabbitmq'
+  group 'rabbitmq'
+  mode '0400'
+end
+
 template "/etc/rabbitmq/rabbitmq.config" do
     source "rabbitmq.config"
     mode '0755'
@@ -7,6 +20,11 @@ template "/etc/rabbitmq/rabbitmq.config" do
     }) 
         notifies :restart, 'service[rabbitmq-server]', :immediately
         notifies :run, "bash[Reset-rabbitmq-server]", :immediately
+end
+
+service 'rabbitmq-server' do
+    service_name 'rabbitmq-server'
+  action [:enable, :start]
 end
 
 bash "Reset-rabbitmq-server" do 
