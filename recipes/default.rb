@@ -38,7 +38,6 @@ if ( node.hostname =~ /propel-ha(.*)/ )
             rpm -Uvh /tmp/rabbitmq-server-3.5.4-1.noarch.rpm
          fi
         EOH
-       notifies :run, "bash[env-check]", :immediately
     end
 end
 
@@ -52,19 +51,6 @@ end
 service 'rabbitmq-server' do
     service_name 'rabbitmq-server'
   action [:enable, :start]
-end
-
-bash "env-check" do 
-  action :nothing
-  code <<-EOH
-          for i in  epmd beam
-          do
-            pid=`ps -ef|grep $i |grep -v grep|grep -v PPID|awk '{ print $2}'`
-            if [ $pid -gt 1 ] ; then
-              kill -9 $pid
-            fi
-          done
-      EOH
 end
 
 cookbook_file '/var/lib/rabbitmq/.erlang.cookie' do
