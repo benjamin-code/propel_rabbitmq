@@ -1,7 +1,7 @@
 service 'rabbitmq-server' do
     service_name 'rabbitmq-server'
     action [ :stop]
-    only_if { ::File.exist?("/var/lib/rabbitmq/.erlang.cookie") }
+    only_if { " -f /var/lib/rabbitmq/.erlang.cookie" && "grep -q ERHDIBXLEUHAKDFMMHDN /var/lib/rabbitmq/.erlang.cookie" }
 end
 
 cookbook_file '/var/lib/rabbitmq/.erlang.cookie' do
