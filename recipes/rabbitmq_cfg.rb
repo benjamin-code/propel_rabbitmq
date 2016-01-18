@@ -1,3 +1,13 @@
+#Add new user for propel, and grant admin privilege, and set full permission for vhost "/". Do it in both nodes
+execute "Add-user" do
+   user "root"
+   command <<-EOH
+      rabbitmqctl add_user rabbit_sx propel2014
+      rabbitmqctl set_user_tags rabbit_sx administrator
+      rabbitmqctl set_permissions -p / rabbit_sx ".*" ".*" ".*"
+      EOH
+end
+
 service 'rabbitmq-server' do
     service_name 'rabbitmq-server'
     action [ :stop]
