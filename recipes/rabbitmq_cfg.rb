@@ -1,26 +1,3 @@
-#Add new user for propel, and grant admin privilege, and set full permission for vhost "/". Do it in both nodes
-execute "Add-user" do
-   user "root"
-   command <<-EOH
-      rabbitmqctl add_user rabbit_sx propel2014
-      rabbitmqctl set_user_tags rabbit_sx administrator
-      rabbitmqctl set_permissions -p / rabbit_sx ".*" ".*" ".*"
-      EOH
-end
-
-service 'rabbitmq-server' do
-    service_name 'rabbitmq-server'
-    action [ :stop]
-    not_if "grep -q ERHDIBXLEUHAKDFMMHDN /var/lib/rabbitmq/.erlang.cookie"
-end
-
-cookbook_file '/var/lib/rabbitmq/.erlang.cookie' do
-  source '.erlang.cookie'
-  owner 'rabbitmq'
-  group 'rabbitmq'
-  mode '0400'
-end
-
 template "/etc/rabbitmq/rabbitmq.config" do
     source "rabbitmq.config"
     mode '0755'
@@ -32,11 +9,6 @@ template "/etc/rabbitmq/rabbitmq.config" do
         notifies :run, "bash[Reset-rabbitmq-server]", :immediately
 end
 
-service 'rabbitmq-server' do
-    service_name 'rabbitmq-server'
-  action [:enable, :start]
-end
-
 bash "Reset-rabbitmq-server" do 
   action :nothing
   code <<-EOH
@@ -45,4 +17,18 @@ bash "Reset-rabbitmq-server" do
       rabbitmqctl start_app
       rabbitmqctl set_policy ha-all "^propel_cluster"  '{"ha-mode":"all"}'
       EOH
+end
+
+#Add new user for propel, and grant admin privilege, and set full permission for vhost "/". Do it in both nodes
+execute "Add-user" do
+   user "root"
+   command <<-EOH
+           rabbitmqctl list_users | grep rabbit_sx
+              if [ $? -ne 0 ]
+              then
+                  rabbitmqctl add_user rabbit_sx propel2014
+                  rabbitmqctl set_user_tags rabbit_sx administrator
+                  rabbitmqctl set_permissions -p / rabbit_sx ".*" ".*" ".*"
+               fi
+             EOH
 end

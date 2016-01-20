@@ -50,6 +50,19 @@ end
 
 service 'rabbitmq-server' do
     service_name 'rabbitmq-server'
+    action [ :stop]
+    not_if "grep -q ERHDIBXLEUHAKDFMMHDN /var/lib/rabbitmq/.erlang.cookie"
+end
+
+cookbook_file '/var/lib/rabbitmq/.erlang.cookie' do
+  source '.erlang.cookie'
+  owner 'rabbitmq'
+  group 'rabbitmq'
+  mode '0400'
+end
+
+service 'rabbitmq-server' do
+    service_name 'rabbitmq-server'
   action [:enable, :start]
 end
 
