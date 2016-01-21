@@ -13,7 +13,7 @@ cookbook_file '/etc/yum.repos.d/erlang_solutions.repo' do
 end
 
 yum_package 'erlang' do
-  action :install
+  action :upgrade
   flush_cache [ :before ]
 end
 
