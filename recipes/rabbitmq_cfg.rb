@@ -1,3 +1,8 @@
+service 'rabbitmq-server' do
+    service_name 'rabbitmq-server'
+  action [:enable, :start]
+end
+
 template "/etc/rabbitmq/rabbitmq.config" do
     source "rabbitmq.config"
     mode '0755'
