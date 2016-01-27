@@ -28,12 +28,9 @@ end
 execute "Add-user" do
    user "root"
    command <<-EOH
-           rabbitmqctl list_users | grep rabbit_sx
-              if [ $? -ne 0 ]
-              then
                   rabbitmqctl add_user rabbit_sx propel2014
                   rabbitmqctl set_user_tags rabbit_sx administrator
                   rabbitmqctl set_permissions -p / rabbit_sx ".*" ".*" ".*"
-               fi
              EOH
+   not_if "rabbitmqctl list_users | grep rabbit_sx"
 end

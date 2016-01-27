@@ -10,6 +10,7 @@
 cookbook_file '/etc/yum.repos.d/erlang_solutions.repo' do
   source 'erlang_solutions.repo'
   mode '0644'
+  only_if { node.hostname =~ /propel-ha(.*)/  }
 end
 
 yum_package 'erlang' do
@@ -41,7 +42,7 @@ if ( node.hostname =~ /propel-ha(.*)/ )
     end
 end
 
-if ( node.hostname =~ /atc(.*)/ )
+if ( node.hostname =~ /cr(.*)/ )
   yum_package 'rabbitmq-server' do
     action :install
     flush_cache [ :before ]

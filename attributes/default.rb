@@ -1,4 +1,4 @@
-if ( node.hostname =~ /atc(.*)/ )
+if ( node.hostname =~ /cr(.*)/ )
   puts "This is the Prod environment."
 default[:propel_rabbitmq][:propel_backend_1] = "atc-cr-wls3"
 default[:propel_rabbitmq][:propel_backend_2] = "atc-cr-wls4"
