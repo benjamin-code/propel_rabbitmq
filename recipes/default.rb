@@ -18,14 +18,6 @@ yum_package 'erlang' do
   flush_cache [ :before ]
 end
 
-if ( node.hostname =~ /centos6(.*)/ )
-  execute "Download rabbitmq-server-3.5.4-1.noarch.rpm" do
-  user "root"
-  cwd   "/tmp"
-  command "wget https://www.rabbitmq.com/releases/rabbitmq-server/v3.5.4/rabbitmq-server-3.5.4-1.noarch.rpm & rpm -Uvh /tmp/rabbitmq-server-3.5.4-1.noarch.rpm"
-  end
-end
-
 if ( node.hostname =~ /propel-ha(.*)/ )
     remote_file "/tmp/rabbitmq-server-3.5.4-1.noarch.rpm" do
       source 'http://30.161.224.150/rpm/rabbitmq-server-3.5.4-1.noarch.rpm' 

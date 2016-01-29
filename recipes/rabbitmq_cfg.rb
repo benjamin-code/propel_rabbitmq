@@ -10,6 +10,21 @@ template "/etc/rabbitmq/rabbitmq.config" do
       :propel_backend_1 => node[:propel_rabbitmq][:propel_backend_1],
       :propel_backend_2 => node[:propel_rabbitmq][:propel_backend_2],
     }) 
+        only_if { node.chef_environment == 'sandbox' || node.chef_environment == 'env1'  }
+        notifies :restart, 'service[rabbitmq-server]', :immediately
+        notifies :run, "bash[Reset-rabbitmq-server]", :immediately
+end
+
+template "/etc/rabbitmq/rabbitmq.config" do
+    source "rabbitmq.prod.config"
+    mode '0755'
+    variables ({
+      :propel_backend_1 => node[:propel_rabbitmq][:propel_backend_1],
+      :propel_backend_2 => node[:propel_rabbitmq][:propel_backend_2],
+      :propel_backend_3 => node[:propel_rabbitmq][:propel_backend_3],
+      :propel_backend_4 => node[:propel_rabbitmq][:propel_backend_4],
+    }) 
+        only_if { node.chef_environment == 'prod' }
         notifies :restart, 'service[rabbitmq-server]', :immediately
         notifies :run, "bash[Reset-rabbitmq-server]", :immediately
 end
