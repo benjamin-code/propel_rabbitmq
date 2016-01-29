@@ -25,6 +25,7 @@ bash "Reset-rabbitmq-server" do
 end
 
 #Add new user for propel, and grant admin privilege, and set full permission for vhost "/". Do it in both nodes
+
 execute "Add-user" do
    user "root"
    command <<-EOH
