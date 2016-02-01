@@ -9,6 +9,8 @@ template "/etc/rabbitmq/rabbitmq.config" do
     variables ({
       :propel_backend_1 => node[:propel_rabbitmq][:propel_backend_1],
       :propel_backend_2 => node[:propel_rabbitmq][:propel_backend_2],
+      :propel_cert_path => node[:propel_nginx][:propel_cert_path],
+      :propel_key_path => node[:propel_nginx][:propel_key_path],
     }) 
         notifies :restart, 'service[rabbitmq-server]', :immediately
         notifies :run, "bash[Reset-rabbitmq-server]", :immediately
