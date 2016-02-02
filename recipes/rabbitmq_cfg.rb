@@ -9,8 +9,8 @@ template "/etc/rabbitmq/rabbitmq.config" do
     variables ({
       :propel_backend_1 => node[:propel_rabbitmq][:propel_backend_1],
       :propel_backend_2 => node[:propel_rabbitmq][:propel_backend_2],
-      :propel_cert_path => node[:propel_nginx][:propel_cert_path],
-      :propel_key_path => node[:propel_nginx][:propel_key_path],
+      :propel_cert_path => node[:propel_rabbitmq][:propel_cert_path],
+      :propel_key_path  => node[:propel_rabbitmq][:propel_key_path],
     }) 
         only_if { node.chef_environment == 'sandbox' || node.chef_environment == 'env1'  }
         notifies :restart, 'service[rabbitmq-server]', :immediately
@@ -25,6 +25,8 @@ template "/etc/rabbitmq/rabbitmq.config" do
       :propel_backend_2 => node[:propel_rabbitmq][:propel_backend_2],
       :propel_backend_3 => node[:propel_rabbitmq][:propel_backend_3],
       :propel_backend_4 => node[:propel_rabbitmq][:propel_backend_4],
+      :propel_cert_path => node[:propel_rabbitmq][:propel_cert_path],
+      :propel_key_path  => node[:propel_rabbitmq][:propel_key_path],
     }) 
         only_if { node.chef_environment == 'prod' }
         notifies :restart, 'service[rabbitmq-server]', :immediately
