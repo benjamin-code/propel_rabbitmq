@@ -1,3 +1,7 @@
+lbui = node[:propel_ha][:lbui]
+default[:propel_nginx][:propel_cert_path] = "/opt/hp/propel/security/#{lbui}.crt"
+default[:propel_nginx][:propel_key_path] = "/opt/hp/propel/security/#{lbui}.key"
+
 if node.chef_environment == 'prod'
 default[:propel_rabbitmq][:propel_backend_1] = "atc-cr-wls3"
 default[:propel_rabbitmq][:propel_backend_2] = "atc-cr-wls4"

@@ -9,6 +9,8 @@ template "/etc/rabbitmq/rabbitmq.config" do
     variables ({
       :propel_backend_1 => node[:propel_rabbitmq][:propel_backend_1],
       :propel_backend_2 => node[:propel_rabbitmq][:propel_backend_2],
+      :propel_cert_path => node[:propel_nginx][:propel_cert_path],
+      :propel_key_path => node[:propel_nginx][:propel_key_path],
     }) 
         only_if { node.chef_environment == 'sandbox' || node.chef_environment == 'env1'  }
         notifies :restart, 'service[rabbitmq-server]', :immediately
@@ -40,6 +42,7 @@ bash "Reset-rabbitmq-server" do
 end
 
 #Add new user for propel, and grant admin privilege, and set full permission for vhost "/". Do it in both nodes
+
 execute "Add-user" do
    user "root"
    command <<-EOH

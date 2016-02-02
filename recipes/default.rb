@@ -34,7 +34,7 @@ if ( node.hostname =~ /propel-ha(.*)/ )
     end
 end
 
-if ( node.hostname =~ /cr(.*)/ )
+if node.chef_environment == 'env1' || node.chef_environment == 'prod'
   yum_package 'rabbitmq-server' do
     action :install
     flush_cache [ :before ]
