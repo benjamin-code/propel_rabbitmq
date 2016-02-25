@@ -14,8 +14,8 @@ cookbook_file '/etc/yum.repos.d/erlang_solutions.repo' do
 end
 
 yum_package 'erlang' do
-  action :upgrade
   flush_cache [ :before ]
+  version '18.1-1.el6'
 end
 
 if ( node.hostname =~ /propel-ha(.*)/ )
@@ -59,7 +59,7 @@ service 'rabbitmq-server' do
   action [:enable, :start]
 end
 
-bash "Install-rabbitmq-server" do
+bash "enable plugins" do
     code <<-EOH
          rabbitmq-plugins enable rabbitmq_management
          rabbitmq-plugins enable rabbitmq_management_agent
