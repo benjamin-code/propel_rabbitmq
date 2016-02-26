@@ -15,7 +15,6 @@ end
 
 yum_package 'erlang' do
   flush_cache [ :before ]
-  version '18.1-1.el6'
 end
 
 if ( node.hostname =~ /propel-ha(.*)/ )
